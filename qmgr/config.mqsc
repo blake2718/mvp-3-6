@@ -1,0 +1,16 @@
+DELETE QLOCAL(DEV.QUEUE.3)
+DELETE QLOCAL(DEV.QUEUE.2)
+DELETE QLOCAL(DEV.QUEUE.1)
+
+define topic(QROUTER) topicstr('qrouter')
+define qlocal(COLOR.BLUE)
+define qlocal(COLOR.RED)
+define qalias(QR) target(QROUTER) targtype(topic)
+
+define sub(COLOR.RED) topicstr('qrouter') dest(COLOR.RED) SELECTOR('color=''red''')
+define sub(COLOR.BLUE) topicstr('qrouter') dest(COLOR.BLUE) SELECTOR('color=''blue''')
+
+SET AUTHREC PROFILE('QR') GROUP('mqclient') OBJTYPE(QUEUE) AUTHADD(BROWSE,GET,INQ,PUT)
+SET AUTHREC PROFILE('QROUTER') GROUP('mqclient') OBJTYPE(TOPIC) AUTHADD(PUB,SUB)
+SET AUTHREC PROFILE('COLOR.BLUE') GROUP('mqclient') OBJTYPE(QUEUE) AUTHADD(BROWSE,GET,INQ)
+SET AUTHREC PROFILE('COLOR.RED') GROUP('mqclient') OBJTYPE(QUEUE) AUTHADD(BROWSE,GET,INQ)
